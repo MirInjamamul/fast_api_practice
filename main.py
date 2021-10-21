@@ -2,7 +2,7 @@ from typing import Optional, List
 
 import uvicorn
 from enum import Enum
-from fastapi import FastAPI , Query
+from fastapi import FastAPI , Query, Path
 from pydantic import BaseModel
 
 class ModelName(str, Enum):
@@ -74,11 +74,19 @@ async def read_user_item(user_id:int , item_id:str, q: str, short:bool=False):
 
 # String Validation
 @app.get("/item_validate/")
-async def get_items(item_id: List[str] = Query(..., max_length=10, min_length=2,title="List Of Items", description="All items in a list")):
-    results = {"items": item_id}
+async def read_items(item_id: List[str] = Query(..., max_length=10, min_length=2,title="List Of Items", description="All items in a list")):
+    results = {"items": [{"item_id": "Pen"}, {"item_id": "Pencil"}]}
 
-    # if item_id:
-    #     results.update({"item_id": item_id})
+    if item_id:
+        results.update({"item_id": item_id})
+
+    return results
+
+# Numeric Validation
+@app.get("/item_validate/{item_id}/")
+async def get_items(item_id: int = Path(..., title="Numeric Validation", gt=0 , lt=10)):
+    results = {"items": [{"item_id": "Pen"}, {"item_id": "Pencil"}]}
+    results.update({"New Item": item_id})
 
     return results
 
