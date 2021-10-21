@@ -44,6 +44,17 @@ async def read_items(item_id:str,q: str=None, short: bool=False):
 
     return item
 
+# Multiple Path and query Parameters
+@app.get("/users/{user_id}/items/{item_id}")
+async def read_user_item(user_id:int , item_id:str, q: str=None, short:bool=False):
+    item = {"User id":user_id, "Item id":item_id}
+
+    if q:
+        item.update({"q":q})
+    if not short:
+        item.update({"Description": "There is no description"})
+
+    return item
 
 if __name__ == "__main__":
     uvicorn.run(app, host = "127.0.0.1", port= 8090 )
