@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Optional, List
 
 import uvicorn
 from enum import Enum
-from fastapi import FastAPI
+from fastapi import FastAPI , Query
 from pydantic import BaseModel
 
 class ModelName(str, Enum):
@@ -71,6 +71,16 @@ async def read_user_item(user_id:int , item_id:str, q: str, short:bool=False):
         item.update({"Description": "There is no description"})
 
     return item
+
+# String Validation
+@app.get("/item_validate/")
+async def get_items(item_id: List[str] = Query(..., max_length=10, min_length=2,title="List Of Items", description="All items in a list")):
+    results = {"items": item_id}
+
+    # if item_id:
+    #     results.update({"item_id": item_id})
+
+    return results
 
 if __name__ == "__main__":
     uvicorn.run(app, host = "127.0.0.1", port= 8090 )
