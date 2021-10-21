@@ -11,6 +11,8 @@ class ModelName(str, Enum):
 
 app = FastAPI(debug= True)
 
+
+# Path Parameters
 @app.get("/model/{model_name}")
 async def get_model(model_name: ModelName):
     if(model_name == ModelName.start):
@@ -23,6 +25,12 @@ async def get_model(model_name: ModelName):
 @app.get("/files/{file_path:path}")
 async def get_file(file_path:str):      # url/files/myUploadedFolder/recording.wav
     return {"file_path": file_path}
+
+# Query Parameters
+@app.get("/items/")
+async def get_item(init:int = 0, limit:int = 10):
+    return {"Initial Value": init, "Limit": limit}
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host = "127.0.0.1", port= 8090 )
