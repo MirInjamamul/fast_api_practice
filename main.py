@@ -3,6 +3,7 @@ from typing import Optional
 import uvicorn
 from enum import Enum
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 class ModelName(str, Enum):
     start = "start"
@@ -10,6 +11,21 @@ class ModelName(str, Enum):
     stop = "stop"
 
 app = FastAPI(debug= True)
+
+class Item(BaseModel):
+    name : str
+    description : str = None
+    price : float
+    tax : float = None
+
+@app.post("/items/")
+async def create_item(item:Item):
+    item_dict = item.dict()
+    if item.tax:
+        total = item.price + item.tax
+        item_dict.update({"Total Amount":total})
+
+    return item_dict
 
 
 # Path Parameters
